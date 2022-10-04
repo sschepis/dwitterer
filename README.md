@@ -1,7 +1,7 @@
-# canvas-dojo 
+# Dwitterer
 [![The MIT License](https://img.shields.io/badge/license-MIT-orange.svg?style=flat-square)](http://opensource.org/licenses/MIT)
 
-> A plugin for learning and experimenting html5 canvas.
+> Like Dwitter but with more d and in VS Code
 ## Features
 
 * No need html or style files to run canvas
