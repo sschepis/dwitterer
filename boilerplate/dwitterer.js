@@ -1,0 +1,1 @@
+f=(X,Y,Z,A)=>x.fillRect(X,Y,w=Z<.3?4*Z:Z,w,Z>.2&&f(X+Z*S(A),Y-Z*C(A),Z*.95,A+C(9*t/Z+n/2+2*t+2*n)/Z/8),Z*3%1>.8&&f(X,Y,Z*.8,A+9*Z%2-1,n++),x.fillStyle='#'+(6*Z<<5));c.width=320;f(160,200,11,n=0)
