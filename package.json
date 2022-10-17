@@ -4,7 +4,7 @@
   "displayName": "Dwitterer",
   "description": "Like dwitter but with more d and in VS Code",
   "icon": "dwitterer-logo.png",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "repository": {
     "type": "git",
     "url": "https://github.com/sschepis/dwitterer"
@@ -21,8 +21,14 @@
   ],
   "activationEvents": [
     "onCommand:dwitterer.start",
+    "onCommand:dwitterer.timerless.start",
+    "onCommand:dwitterer.paperscript.start",
     "onCommand:dwitterer.doRefactor",
-    "onView:dwitter.canvasView"
+    "onCommand:dwitterer.timerless.doRefactor",
+    "onCommand:dwitterer.paperscript.doRefactor",
+    "onView:dwitter.canvasView",
+    "onView:dwitter.timerless.canvasView",
+    "onView:dwitter.paperscript.canvasView"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -32,6 +38,16 @@
           "type": "webview",
           "id": "dwitterer.canvasView",
           "name": "Dwitterer"
+        },
+        {
+          "type": "webview",
+          "id": "dwitterer.timerless.canvasView",
+          "name": "Dwitterer Timerless"
+        },
+        {
+          "type": "webview",
+          "id": "dwitterer.paperscript.canvasView",
+          "name": "Dwitterer Paperscript"
         }
       ]
     },
@@ -41,8 +57,24 @@
         "title": "Dwitterer"
       },
       {
+        "command": "dwitterer.timerless.start",
+        "title": "Dwitterer Timerless"
+      },
+      {
+        "command": "dwitterer.paperscript.start",
+        "title": "Dwitterer PaperScript"
+      },
+      {
         "command": "dwitterer.doRefactor",
         "title": "Dwitterer Update"
+      },
+      {
+        "command": "dwitterer.timerless.doRefactor",
+        "title": "Dwitterer Timerless Update"
+      },
+      {
+        "command": "dwitterer.paperscript.doRefactor",
+        "title": "Dwitterer PaperScript Update"
       }
     ],
     "snippets": [

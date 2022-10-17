@@ -1,12 +1,13 @@
 import * as vscode from "vscode";
-
+import path = require("path");
+import fs = require("fs");
 class CanvasPanel {
   /**
    * Track the currently panel. Only allow a single panel to exist at a time.
    */
   public static currentPanel: CanvasPanel | undefined;
 
-  public static readonly viewType = "canvas-dojo.canvasView";
+  public static readonly viewType = "dwitterer.canvasView";
 
   private readonly _panel: vscode.WebviewPanel;
   private readonly _extensionUri: vscode.Uri;
@@ -26,7 +27,7 @@ class CanvasPanel {
     // Otherwise, create a new panel.
     const panel = vscode.window.createWebviewPanel(
       CanvasPanel.viewType,
-      "Canvas Preview",
+      "Dwitterer",
       column || vscode.ViewColumn.One,
       getWebviewOptions(extensionUri)
     );
@@ -108,6 +109,10 @@ class CanvasPanel {
     if (editor) {
       const document = editor.document;
       scriptCode = document.getText();
+      // trim leading and trailing newlines
+      scriptCode = scriptCode.replace(/^\s+|\s+$/g, "");
+      // replace newlines with semicolons
+      scriptCode = scriptCode.replace(/\n/g, ";");
     }
 
     // Do the same for the stylesheet.
@@ -120,34 +125,48 @@ class CanvasPanel {
     const styleMainUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "media", "main.css")
     );
-
+    const paperMainUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "media", "paper.js")
+    );
+    const jqueryMainUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "media", "jquery.js")
+    );
+    const scriptCanvasSource = fs.readFileSync(
+      path.join(__dirname, "../media", "script-canvas.js"),
+      "utf8"
+    );
     // Use a nonce to only allow a specific script to be run.
     const nonce = getNonce();
 
-    return `<!DOCTYPE html>
-			<html lang="en">
-			<head>
-				<meta charset="UTF-8">
-				<!--
-					Use a content security policy to only allow loading images from https or from our extension directory,
-					and only allow scripts that have a specific nonce.
-				-->
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    const returnHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
 
-				<link href="${styleResetUri}" rel="stylesheet">
-				<link href="${styleVSCodeUri}" rel="stylesheet">
-				<link href="${styleMainUri}" rel="stylesheet">
-				
-				<title>Cat Colors</title>
-			</head>
-			<body>
-        <canvas></canvas>
-				<script nonce="${nonce}">
-        ${scriptCode}
-        </script>
-			</body>
-			</html>`;
+  <link href="${styleResetUri}" rel="stylesheet">
+  <link href="${styleVSCodeUri}" rel="stylesheet">
+  <link href="${styleMainUri}" rel="stylesheet">
+  <title>Script Canvas</title>
+  <style>
+    canvas {
+      width: 100%;
+    }
+  </style>
+  <script src="${scriptCanvasSource}" type="module">
+</head>
+  <body translate="no" >
+  <canvas id="canvas" is="script-canvas"></canvas>
+  <script id="rendered-js" type="module">
+  document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.querySelector('#canvas');
+    canvas.setAttribute('width', 1920);
+    canvas.setAttribute('height', 1080);
+    canvas.setAttribute('script', "${scriptCode}")
+  });
+  </script>    
+  </body>
+</html>`;
+    return returnHtml;
   }
 }
 
